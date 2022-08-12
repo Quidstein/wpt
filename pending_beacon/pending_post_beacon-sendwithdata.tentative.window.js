@@ -21,4 +21,15 @@ for (const [dataType, skipCharset] of Object.entries(
       'Encoded and sent in POST request.');
 }
 
-// TODO(crbug.com/1293679): Test large payload.
+// Test large payload.
+for (const dataType in BeaconDataType) {
+  postBeaconSendDataTest(
+      dataType, generatePayload(65536), 'Sent out big data.');
+}
+
+test(() => {
+  const uuid = token();
+  const url = generateSetBeaconURL(uuid);
+  let beacon = new PendingPostBeacon(url);
+  assert_throws_js(TypeError, () => beacon.setData(new ReadableStream()));
+}, 'setData() does not support ReadableStream.');
